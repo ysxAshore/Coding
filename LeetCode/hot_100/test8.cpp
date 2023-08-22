@@ -9,49 +9,82 @@ int myAtoi(string s) {
         ++i;
     }
     s=s.substr(i,s.size()-i);
-    
-    //检测第一个数字
-    i=0;
-    while (!isdigit(s[i])){
-        ++i;
+
+    //有效的字符串须以符号或数字开头
+    if (!(isdigit(s[0])||s[0]=='+'||s[0]=='-')){
+        return 0;
     }
-    //检测最后一个数字
+
+    //判断符号
+    int sign=0;
+    i=0;
+    if (s[0]=='-'){
+        sign=1;
+        i=1;
+    }else if(s[0]=='+'){
+        i=1;
+    }else{
+        i=0;
+    }
+    //判断符号之后是不是数字
+    if (!isdigit(s[i])){
+        return 0;
+    }
+    //截取有效数字
     int j=i+1;
-    while (isdigit(s[j])){
+    while (isdigit(s[j])&&j<s.length()){
         ++j;
     }
-    string res=s.substr(i,j-i);
-    if (s[i-1]=='-'){
-        string temp=s;
-        temp[0]='-';
-        int l=1;
-        for (int k = 0; k < res.length(); k++){
-            temp[l]=res[k];
-            ++l;
-        }
-        temp[l]='\0';
-        string min_num;
-        ss<<INT32_MIN;
-        ss>>min_num;
-        if (temp.length()>min_num.length()||(temp.length()==min_num.length()&&temp>min_num)){
-            res=min_num;
-        }else{
-            res=temp;
-        }
-    }else{
-        string max_num;
-        ss<<INT32_MAX;
-        ss>>max_num;
-        if (res.length()>max_num.length()||(res.length()==max_num.length()&&res>max_num)){
-            res=max_num;
+    string num=s.substr(i,j-i);
+    //去除非0的前0
+    int isZero=1;
+    for (int k = 0; k < num.length(); k++){
+        if (num[k]!='0'&&isdigit(num[k])){
+            isZero=0;   
+            break;
         }
     }
-    stringstream s_(res);
-    int a;
-    s_>>a;
-    return a;
+    if (isZero){
+        return 0;
+    }else{
+        int k;
+        for(k=0;k<num.length();++k){
+            if (num[k]!='0'){
+                break;
+            }
+        }
+        num=num.substr(k,num.length()-k);
+    }
+    //判断是否越界+转换
+    string max,min;
+    ss<<INT32_MAX<<endl;
+    ss>>max;
+    ss<<INT32_MIN<<endl;
+    ss>>min;
+    int x;
+    if (sign){//负数
+        string temp=min.substr(1,min.length()-1);
+        if (temp.length()<num.length()||(temp.length()==num.length()&&temp<num)){
+            return INT32_MIN;//越界
+        }
+        int k=0,l=1;
+        for(;l<=num.length();++l){
+            min[l]=num[k];
+            ++k;
+        }
+        min[l]='\0';
+        ss<<min<<endl;
+        ss>>x;
+    }else{
+        if (max.length()<num.length()||(max.length()==num.length()&&max<num)){
+            return INT32_MAX;//越界
+        }
+        ss<<num<<endl;
+        ss>>x;
+    }
+    return x;
 }
 int main(){
-    cout<<myAtoi("123456789452");
+    cout<<myAtoi(" -1010023630o4");
     return 0;
 }
