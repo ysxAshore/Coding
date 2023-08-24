@@ -17,15 +17,16 @@ vector<vector<int>> threeSum(vector<int>& nums) {
             }
             if (nums[i]+nums[j]+nums[k]==0){
                 ans.push_back({nums[i],nums[j],nums[k]});
-                ++j;--k;
                 while(j<k){
-                    if (nums[j]==nums[j-1]){
-                        ++j;
+                    ++j;
+                    if (nums[j]!=nums[j-1]){
+                        break;
                     }
                 }
                 while(j<k){
-                    if(nums[k]==nums[k+1]){
-                        --k;
+                    --k;
+                    if(nums[k]!=nums[k+1]){
+                        break;
                     }
                 }
             }
